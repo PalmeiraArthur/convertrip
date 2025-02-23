@@ -1,69 +1,91 @@
 import React, { useState } from "react";
+import { useDollar } from "./contextDollar";
 
 function Discount() {
-  const [valores, setValores] = useState({
-    numero: "",
-    discount: "",
-  });
+    const { dollar } = useDollar();
 
-  const [resultado, setResultado] = useState("");
+    const [valores, setValores] = useState({
+        numero: "",
+        discount: "",
+    });
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setValores((prevValores) => ({
-      ...prevValores,
-      [name]: value,
-    }));
-  };
+    const [resultadoDolar, setResultadoDolar] = useState("");
+    const [resultadoReal, setResultadoReal] = useState("");
 
-  const calcularDiscount = () => {
-    const numero = parseFloat(valores.numero);
-    const discount = parseFloat(valores.discount);
+    const handleChange = (event) => {
+        const { name, value } = event.target;
+        setValores((prevValores) => ({
+            ...prevValores,
+            [name]: value,
+        }));
+    };
 
-    if (isNaN(numero) || isNaN(discount)) {
-      alert("Por favor, insira valores válidos.");
-      return;
-    }
+    const handleKeyDown = (event) => {
+        if (event.key === "Enter") {
+            calcularDiscount();
+            event.target.blur();
+        }
+    };
 
-    const valorDiscount = (discount / 100) * numero; 
-    const valorFinal = numero - valorDiscount; 
+    const calcularDiscount = () => {
+        const numero = parseFloat(valores.numero);
+        const discount = parseFloat(valores.discount);
 
-    setResultado(valorFinal.toFixed(2)); 
-  };
+        if (isNaN(numero) || isNaN(discount)) {
+            alert("Por favor, insira valores válidos.");
+            return;
+        }
 
-  return (
-    <div>
-      <h1>Cálculo de discount:</h1>
+        const valorDiscount = (discount / 100) * numero;
+        const valorFinal = numero - valorDiscount;
 
-      <label htmlFor="numero">Digite o valor:</label>
-      <input
-        type="number"
-        id="numero"
-        name="numero"
-        value={valores.numero}
-        onChange={handleChange}
-        placeholder="Digite o valor"
-      />
+        setResultadoDolar(valorFinal.toFixed(2)); 
 
-      <label htmlFor="discount">Discount (%):</label>
-      <input
-        type="number"
-        id="discount"
-        name="discount"
-        value={valores.discount}
-        onChange={handleChange}
-        placeholder="Digite o discount"
-      />
+        setResultadoReal((valorFinal * dollar).toFixed(2));
+    };
 
-      <button onClick={calcularDiscount}>Calcular</button>
+    return (
+        <div className="flex flex-col justify-center items-center gap-10">
+            <div className="flex flex-col gap-0">
+                <input
+                    className="text-center h-[60px] w-[300px] bg-cinzaEscuro text-[30px] placeholder-cinzaBemClaro placeholder:font-semibold rounded-md shadow-inner"
+                    type="number"
+                    id="numero"
+                    name="numero"
+                    value={valores.numero}
+                    onChange={handleChange}
+                    placeholder="Valor $:"
+                />
 
-      {resultado && (
-        <p>
-          O valor final com discount é: <strong>R$ {resultado}</strong>
-        </p>
-      )}
-    </div>
-  );
+                <div className="text-[30px]">-</div>
+
+                <input
+                    className="text-center h-[60px] w-[300px] bg-cinzaEscuro text-[30px] placeholder-cinzaBemClaro placeholder:font-semibold rounded-md shadow-inner"
+                    type="number"
+                    id="discount"
+                    name="discount"
+                    value={valores.discount}
+                    onChange={handleChange}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Desconto %:"
+                />
+            </div>
+
+            <button
+                className="bg-verdeClaro h-[60px] w-[300px] text-[24px] font-semibold rounded-md"
+                onClick={calcularDiscount}
+            >
+                Calcular
+            </button>
+
+            {resultadoDolar && (
+                <div className="flex flex-col justify-center items-center text-[20px] font-semibold shadow-md py-[20px]">
+                    <strong className="text-verdeClaro text-[40px]">$ {resultadoDolar} dólares</strong>
+                    <strong className="text-cinzaBemClaro text-[22px]"> ou R$ {resultadoReal} reais</strong>
+                </div>
+            )}
+        </div>
+    );
 }
 
 export default Discount;
