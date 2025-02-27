@@ -11,10 +11,10 @@ module.exports = {
       'cinzaClaro': '#282A28',
       'cinzaEscuro': '#1C1C1C',
       'cinzaBemClaro': '#454745',
+      'preto': '#000000',
+
     },
     extend: {},
   },
-  plugins: [
-    require('daisyui'),
-  ],
+  plugins: [],
 }

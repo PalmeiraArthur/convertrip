@@ -19,9 +19,9 @@ function Main() {
                 <div className="bg-cinzaClaro shadow-md h-[58px] w-[350px] flex justify-center items-center gap-5 rounded-lg mt-2 font-semibold">
 
                     <button
-                        className={`px-4 py-2 rounded-lg transition-colors duration-200 ${selecao === "converter"
+                        className={`px-4 py-2 rounded-lg transition-colors duration-200  ${selecao === "converter"
                             ? "bg-verdeClaro text-white shadow-inner"
-                            : "bg-cinzaBemClaro text-cinzaClaro  hover:bg-cinzaEscuro"
+                            : "bg-cinzaBemClaro text-cinzaClaro  hover:bg-cinzaEscuro transition-all"
                             }`}
                         onClick={() => setSelecao("converter")}
                     >
@@ -32,7 +32,7 @@ function Main() {
                     <button
                         className={`px-4 py-2 rounded-lg transition-colors duration-200 ${selecao === "discount"
                             ? "bg-verdeClaro text-white shadow-inner"
-                            : "bg-cinzaBemClaro text-cinzaClaro hover:bg-cinzaEscuro"
+                            : "bg-cinzaBemClaro text-cinzaClaro hover:bg-cinzaEscuro transition-all"
                             }`}
                         onClick={() => setSelecao("discount")}
                     >
@@ -42,7 +42,7 @@ function Main() {
                     <button
                         className={`px-4 py-2 rounded-lg transition-colors duration-200 ${selecao === "tax"
                             ? "bg-verdeClaro text-white shadow-inner"
-                            : "bg-cinzaBemClaro text-cinzaClaro hover:bg-cinzaEscuro"
+                            : "bg-cinzaBemClaro text-cinzaClaro hover:bg-cinzaEscuro transition-all"
                             }`}
                         onClick={() => setSelecao("tax")}
                     >

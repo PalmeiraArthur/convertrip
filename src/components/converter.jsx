@@ -39,7 +39,7 @@ function Converter() {
       />
 
       <button
-        className="bg-verdeClaro h-[60px] w-[300px] text-[24px] font-semibold rounded-md"
+        className="bg-verdeClaro h-[60px] w-[300px] text-[24px] font-semibold rounded-md hover:bg-verdeEscuro transition-all"
         onClick={calcularResultado}
       >
         Calcular
@@ -48,7 +48,7 @@ function Converter() {
       {resultado !== null && (
         <p className="flex flex-col justify-center items-center text-[30px] font-semibold shadow-md py-[20px]">
           Esse produto custa:{" "}
-          <strong className="text-verdeClaro text-[40px]">R$ {resultado}</strong>
+          <strong className="text-verdeClaro text-[40px] ">R$ {resultado}</strong>
         </p>
       )}
     </div>

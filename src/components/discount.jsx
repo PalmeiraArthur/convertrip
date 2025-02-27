@@ -72,7 +72,7 @@ function Discount() {
             </div>
 
             <button
-                className="bg-verdeClaro h-[60px] w-[300px] text-[24px] font-semibold rounded-md"
+                className="bg-verdeClaro h-[60px] w-[300px] text-[24px] font-semibold rounded-md transition-all hover:bg-verdeEscuro"
                 onClick={calcularDiscount}
             >
                 Calcular
@@ -80,7 +80,7 @@ function Discount() {
 
             {resultadoDolar && (
                 <div className="flex flex-col justify-center items-center text-[20px] font-semibold shadow-md py-[20px]">
-                    <strong className="text-verdeClaro text-[40px]">$ {resultadoDolar} dólares</strong>
+                    <strong className="text-verdeClaro text-[40px]">${resultadoDolar} dólares</strong>
                     <strong className="text-cinzaBemClaro text-[22px]"> ou R$ {resultadoReal} reais</strong>
                 </div>
             )}

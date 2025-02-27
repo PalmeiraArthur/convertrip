@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDollar } from "../components/contextDollar";
 import { useTax } from "../components/contextTax";
 import Navbar from "../components/navbar";
@@ -24,26 +24,14 @@ function Settings() {
 
 
   const taxsPorCondado = [
-    { value: 6.0, description: "6,0% - Condados sem tax adicional (Estado)" },
-    { value: 6.5, description: "6,5% - Orange County (Orlando)" },
-    { value: 7.0, description: "7,0% - Miami-Dade County (Miami)" },
-    { value: 7.5, description: "7,5% - Hillsborough County (Tampa)" },
-    { value: 8.0, description: "8,0% - Jasper County (Jasper)" },
-    { value: 7.0, description: "7,0% - Duval County (Jacksonville)" },
-    { value: 6.5, description: "6,5% - Lee County (Fort Myers)" },
-    { value: 7.5, description: "7,5% - Marion County (Ocala)" },
-    { value: 7.0, description: "7,0% - Broward County (Fort Lauderdale)" },
-    { value: 6.5, description: "6,5% - Palm Beach County (West Palm Beach)" },
-    { value: 7.0, description: "7,0% - Pinellas County (St. Petersburg)" },
-    { value: 7.5, description: "7,5% - Alachua County (Gainesville)" },
-    { value: 6.5, description: "6,5% - St. Johns County (St. Augustine)" },
-    { value: 7.0, description: "7,0% - Seminole County (Sanford)" },
-    { value: 8.0, description: "8,0% - Jennings County (Jennings)" },
-    { value: 7.5, description: "7,5% - Leon County (Tallahassee)" },
-    { value: 7.0, description: "7,0% - Volusia County (Daytona Beach)" },
-    { value: 6.5, description: "6,5% - Sarasota County (Sarasota)" },
-    { value: 7.0, description: "7,0% - Brevard County (Cocoa Beach)" },
-    { value: 7.5, description: "7,5% - Escambia County (Pensacola)" },
+    { id: "Orlando 6.5", value: 6.50, description: "6,5% - Orange County (Orlando)" },
+    { id: "Palmbeach 6.5", value: 6.50, description: "6,5% - Palm Beach County (West Palm Beach)" },
+    { id: "Miami 7.0", value: 7.00, description: "7,0% - Miami-Dade County (Miami)" },
+    { id: "Fort Lauderdale 7.0", value: 7.00, description: "7,0% - Broward County (Fort Lauderdale)" },
+    { id: "Daytona Beach 7.0", value: 7.00, description: "7,0% - Volusia County (Daytona Beach)" },
+    { id: "Davenport 7.0", value: 7.00, description: "7,0% - Polk Country (Davenport)" },
+    { id: "Tampa 7.5", value: 7.5, description: "7,5% - Hillsborough County (Tampa)" },
+    { id: "Jasper 8.0", value: 8.0, description: "8,0% - Jasper County (Jasper)" },
   ];
 
 
@@ -72,8 +60,11 @@ function Settings() {
   };
 
   const handleOptionDolarChange = (e) => {
-    setOptionDolar(e.target.value);
-    if (e.target.value === "dolar") {
+    const selectedOption = e.target.value;
+    setOptionDolar(selectedOption);
+    localStorage.setItem("optionDolar", selectedOption);
+
+    if (selectedOption === "dolar") {
       obterCotacaoDolar();
     } else {
       setDollar(manualValue);
@@ -81,10 +72,12 @@ function Settings() {
     }
   };
 
+
   const salvarDolar = () => {
     if (optionDolar === "manual") {
-      setDollar(Number(newDollar));
-      setmanualValue(Number(newDollar));
+      const formattedDollar = Number(newDollar.toString().replace(",", "."));
+      setDollar(formattedDollar);
+      setmanualValue(formattedDollar);
     } else {
       setDollar(dollar);
       setNewDollar(dollar);
@@ -94,23 +87,65 @@ function Settings() {
   };
 
 
+
   const handleOptionTaxChange = (e) => {
-    setOptionTax(e.target.value);
-    if (e.target.value !== "manual") {
-      const taxSelecionada = taxsPorCondado.find((condado) => condado.value === parseFloat(e.target.value));
-      setNewTax(taxSelecionada.value);
+    const selectedId = e.target.value;
+    setOptionTax(selectedId);
+    localStorage.setItem("optionTax", selectedId);
+
+    if (selectedId !== "manual") {
+      const taxSelecionada = taxsPorCondado.find((condado) => condado.id === selectedId);
+      if (taxSelecionada) {
+        setNewTax(taxSelecionada.value);
+      }
     }
   };
+
+
 
   const salvarTax = () => {
     if (optionTax === "manual") {
       setTax(Number(newTax));
     } else {
-      const taxSelecionada = taxsPorCondado.find((condado) => condado.value === parseFloat(optionTax));
-      setTax(taxSelecionada.value);
+      const taxSelecionada = taxsPorCondado.find((condado) => condado.id === optionTax);
+      if (taxSelecionada) {
+        setTax(taxSelecionada.value);
+      }
     }
     setShowConfirmationTax(true);
     setTimeout(() => setShowConfirmationTax(false), 2000);
+  };
+
+
+
+  useEffect(() => {
+    const savedOptionDolar = localStorage.getItem("optionDolar");
+    if (savedOptionDolar) {
+      setOptionDolar(savedOptionDolar);
+      if (savedOptionDolar === "dolar") {
+        obterCotacaoDolar();
+      }
+    }
+
+    const savedOptionTax = localStorage.getItem("optionTax");
+    if (savedOptionTax) {
+      setOptionTax(savedOptionTax);
+      if (savedOptionTax !== "manual") {
+        setNewTax(parseFloat(savedOptionTax));
+      }
+    }
+  }, []);
+  const handleKeyDownDolar = (event) => {
+    if (event.key === "Enter") {
+      salvarDolar();
+      event.target.blur();
+    }
+  };
+  const handleKeyDownTaxa = (event) => {
+    if (event.key === "Enter") {
+      salvarTax();
+      event.target.blur();
+    }
   };
 
   return (
@@ -118,7 +153,7 @@ function Settings() {
       <Navbar></Navbar>
       <div className="bg-cinzaEscuro h-screen mt-[60px] pt-[8px] relative flex flex-col gap-[20px] rounded-t-lg shadow-md">
         <div className="flex justify-center items-center">
-          <svg onClick={handleNavigateToSettings} className="absolute left-3"
+          <svg onClick={handleNavigateToSettings} className="absolute left-3 cursor-pointer hover:fill-verdeClaro "
             xmlns="http://www.w3.org/2000/svg"
             height="35px"
             viewBox="0 -960 960 960"
@@ -130,73 +165,83 @@ function Settings() {
           <h1 className="text-[23px] font-semibold">Configurações</h1>
         </div>
 
-        <div className="bg-cinzaClaro mx-[8px] rounded-md shadow-md p-[10px] flex flex-col justify-center items-center gap-4 text-[]" >
-          <h2>Dólar</h2>
-          <select id="optionDolar" value={optionDolar} onChange={handleOptionDolarChange}>
+        <div className="bg-cinzaClaro mx-[8px] rounded-md shadow-md  flex flex-col justify-center items-center gap-6 text-[20px] py-4 " >
+          <h2 className="font-semibold text-[25px]">Dólar</h2>
+          <select id="optionDolar" value={optionDolar} onChange={handleOptionDolarChange} className="bg-cinzaClaro shadow-md px-4 py-3 ">
             <option value="manual">Digitar manualmente</option>
             <option value="dolar">Usar cotação atual do dólar</option>
           </select>
 
           {optionDolar === "manual" ? (
-            <div>
+            <div className="relative w-48 flex items-center">
+              <span className="absolute left-3 text-verdeClaro text-[36px] font-bold">R$</span>
               <input
+                className="pl-10 text-center bg-cinzaClaro shadow-md text-verdeClaro font-bold text-[36px] w-48 h-16"
                 type="number"
                 id="dollar"
                 value={newDollar}
+                onKeyDown={handleKeyDownDolar}
                 onChange={(e) => setNewDollar(e.target.value)}
               />
             </div>
+
           ) : (
-            <div>
-              <p>Dollar atual (cotação): {dollar}</p>
+            <div className="flex flex-row justify-center items-center bg-cinzaClaro shadow-md text-verdeClaro font-bold text-[36px] w-48 h-16 ">
+              <p>R$ {dollar}</p>
             </div>
           )}
 
-          <button onClick={salvarDolar}>Salvar Cotação do Dólar</button>
+          <button className="bg-verdeClaro py-2 px-6 rounded-md hover:bg-verdeEscuro transition-all" onClick={salvarDolar}>Salvar mudanças</button>
           {showConfirmationDolar && (
-            <div className="confirmation-popup">
-              <p>Value do dólar salvo com sucesso!</p>
+            <div className="confirmation-popup text-verdeClaro ">
+              <p>Valor do dólar salvo com sucesso!</p>
             </div>
           )}
 
         </div>
 
 
+        <div className="bg-cinzaClaro mx-[8px] rounded-md shadow-md  flex flex-col justify-center items-center gap-6 text-[20px] py-4 ">
+          <h2 className="font-semibold text-[25px]">Taxa de Vendas</h2>
 
-        <h2>Configuração da Tax de Vendas</h2>
-        <label htmlFor="optionTax">Escolha uma opção:</label>
-        <select id="optionTax" value={optionTax} onChange={handleOptionTaxChange}>
-          <option value="manual">Digitar tax manualmente</option>
-          {taxsPorCondado.map((condado, index) => (
-            <option key={index} value={condado.value}>
-              {condado.description}
-            </option>
-          ))}
-        </select>
+          <select id="optionTax" value={optionTax} onChange={handleOptionTaxChange} className="bg-cinzaClaro shadow-md px-2 py-3 w-[350px]">
+            <option value="manual">Digitar taxa manualmente</option>
+            {taxsPorCondado.map((condado) => (
+              <option key={condado.id} value={condado.id}>
+                {condado.description}
+              </option>
+            ))}
+          </select>
 
-        {optionTax === "manual" ? (
-          <div>
-            <label htmlFor="tax">Digite a tax:</label>
-            <input
-              type="number"
-              id="tax"
-              value={newTax}
-              onChange={(e) => setNewTax(e.target.value)}
-            />
-          </div>
-        ) : (
-          <div>
-            <p>Tax selecionada: {optionTax}%</p>
-          </div>
-        )}
 
-        <button onClick={salvarTax}>Salvar Tax de Vendas</button>
-        {showConfirmationTax && (
-          <div className="confirmation-popup">
-            <p>Tax de vendas salva com sucesso!</p>
-          </div>
-        )}
+          {optionTax === "manual" ? (
+            <div className="relative w-48 flex items-center">
+              <input
+                className="text-center bg-cinzaClaro shadow-md text-verdeClaro font-bold text-[36px] w-48 h-16"
+                type="number"
+                id="tax"
+                value={newTax}
+                onKeyDown={handleKeyDownTaxa}
+                onChange={(e) => setNewTax(e.target.value)}
+              />
+              <span className="absolute right-3 ml-2 text-verdeClaro text-[36px] font-bold">%</span>
+            </div>
+          ) : (
+            <div className="flex flex-row justify-center items-center text-center bg-cinzaClaro shadow-md text-verdeClaro font-bold text-[36px] p-[10px]">
+              <p className="whitespace-pre-line"> {optionTax}%</p>
+            </div>
+          )}
+
+          <button className="bg-verdeClaro py-2 px-6 rounded-md hover:bg-verdeEscuro transition-all" onClick={salvarTax}>Salvar Tax de Vendas</button>
+          {showConfirmationTax && (
+            <div className="confirmation-popup">
+              <p className="text-verdeClaro" >Taxa de vendas salva com sucesso!</p>
+            </div>
+          )}
+        </div>
+
       </div>
+
 
     </div>
 
