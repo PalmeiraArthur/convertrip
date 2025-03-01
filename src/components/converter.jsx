@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useDollar } from "./contextDollar";
 
@@ -16,7 +17,10 @@ function Converter() {
       return;
     }
 
-    setResultado((Number(numero) * dollar).toFixed(2)); 
+    setResultado((Number(numero) * dollar).toLocaleString("pt-BR", 
+      {minimumFractionDigits: 2, 
+        maximumFractionDigits: 2,
+      })); 
   };
 
   const handleKeyDown = (event) => {
