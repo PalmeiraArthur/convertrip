@@ -39,9 +39,15 @@ function Discount() {
         const valorDiscount = (discount / 100) * numero;
         const valorFinal = numero - valorDiscount;
 
-        setResultadoDolar(valorFinal.toFixed(2)); 
-
-        setResultadoReal((valorFinal * dollar).toFixed(2));
+        setResultadoDolar(valorFinal.toLocaleString("pt-BR", 
+      {minimumFractionDigits: 2, 
+        maximumFractionDigits: 2,
+      }));
+        
+        setResultadoReal((valorFinal * dollar).toLocaleString("pt-BR", 
+      {minimumFractionDigits: 2, 
+        maximumFractionDigits: 2,
+      })); 
     };
 
     return (
