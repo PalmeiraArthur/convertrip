@@ -29,7 +29,10 @@ function Tax() {
     const valorTax = valorCompra * taxVendas;
     const valorFinal = valorCompra + valorTax;
 
-    setResultado(valorFinal.toFixed(2));
+    setResultado(valorFinal.toLocaleString("pt-BR", 
+      {minimumFractionDigits: 2, 
+        maximumFractionDigits: 2,
+      })); 
   };
 
   const handleKeyDown = (event) => {
